@@ -4,7 +4,10 @@ import 'dart:developer' as imprime;
 import 'package:transferencias/model/transferencia.dart';
 
 class TransferenciaForm extends StatefulWidget {
-  const TransferenciaForm({Key? key}) : super(key: key);
+  final void Function(Transferencia) addTransferencia;
+
+  const TransferenciaForm({Key? key, required this.addTransferencia})
+      : super(key: key);
 
   @override
   _TransferenciaFormState createState() => _TransferenciaFormState();
@@ -20,7 +23,7 @@ class _TransferenciaFormState extends State<TransferenciaForm> {
       appBar: AppBar(
         title: const Text('TRANSFERÊNCIA'),
       ),
-      body: _construirFormulario(),
+      body: SingleChildScrollView(child: _construirFormulario()),
     );
   }
 
@@ -39,6 +42,20 @@ class _TransferenciaFormState extends State<TransferenciaForm> {
     );
   }
 
+  void salvarTransferencia() {
+    try {
+      String numeroConta = _controllerNumeroConta.text;
+      double valor = double.parse(_controllerValor.text);
+      Transferencia tr = Transferencia(numeroConta: numeroConta, valor: valor);
+
+      widget.addTransferencia(tr);
+    } catch (e) {
+      imprime.log('Não deu certo');
+    }
+
+    Navigator.of(context).pop();
+  }
+
   Widget _construirFormulario() {
     return Column(
       children: <Widget>[
@@ -46,17 +63,7 @@ class _TransferenciaFormState extends State<TransferenciaForm> {
             _controllerNumeroConta, 'Número da Conta', '0000 - A', false),
         _construirCampoEntrada(_controllerValor, 'Valor', '0.00', true),
         ElevatedButton(
-          onPressed: () {
-            try {
-              String numeroConta = _controllerNumeroConta.text;
-              double valor = double.parse(_controllerValor.text);
-              Transferencia tr =
-                  Transferencia(numeroConta: numeroConta, valor: valor);
-              imprime.log(tr.toString());
-            } catch (e) {
-              imprime.log('Não deu certo');
-            }
-          },
+          onPressed: salvarTransferencia,
           child: const Text("Salvar"),
         ),
       ],

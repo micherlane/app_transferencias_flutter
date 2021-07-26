@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../model/transferencia.dart';
 import '../telas/formulario.dart';
+import 'dart:developer' as imprime;
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -10,6 +11,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final List<Transferencia> _transferencias = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,26 +22,36 @@ class _HomeState extends State<Home> {
     );
   }
 
+  void adicionarTransferencia(Transferencia transferencia) {
+    setState(() {
+      _transferencias.add(transferencia);
+    });
+    imprime.log(_transferencias.toString());
+  }
+
   AppBar _construirAppBar(titulo) {
     return AppBar(title: Text(titulo));
   }
 
   Widget _construirCardsTransferencias() {
-    return Column(
-      children: [
-        _construirItemTransferencia(
-            Transferencia(numeroConta: '12345-A', valor: 100.0)),
-        _construirItemTransferencia(
-            Transferencia(numeroConta: '12345-A', valor: 100.0)),
-      ],
+    return ListView.builder(
+      itemCount: _transferencias.length,
+      itemBuilder: (ctx, index) {
+        var tr = _transferencias[index];
+        return _construirItemTransferencia(tr);
+      },
     );
   }
 
   Widget _construirBotaoCriarTransferencia() {
     return FloatingActionButton(
       onPressed: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const TransferenciaForm()));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => TransferenciaForm(
+                      addTransferencia: adicionarTransferencia,
+                    )));
       },
       child: const Icon(Icons.add),
     );
@@ -48,8 +61,8 @@ class _HomeState extends State<Home> {
     return Card(
       child: ListTile(
         leading: const Icon(Icons.monetization_on),
-        title: Text(transferencia.valor.toString()),
-        subtitle: Text(transferencia.numeroConta),
+        title: Text(transferencia.numeroConta),
+        subtitle: Text(transferencia.valor.toString()),
       ),
     );
   }
