@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:developer' as imprime;
+
+import 'package:transferencias/model/transferencia.dart';
 
 class TransferenciaForm extends StatefulWidget {
   const TransferenciaForm({Key? key}) : super(key: key);
@@ -8,6 +11,9 @@ class TransferenciaForm extends StatefulWidget {
 }
 
 class _TransferenciaFormState extends State<TransferenciaForm> {
+  final TextEditingController _controllerNumeroConta = TextEditingController();
+  final TextEditingController _controllerValor = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -18,8 +24,10 @@ class _TransferenciaFormState extends State<TransferenciaForm> {
     );
   }
 
-  Widget _construirCampoEntrada(String? label, String hint, bool ehNumero) {
+  Widget _construirCampoEntrada(TextEditingController controller, String? label,
+      String hint, bool ehNumero) {
     return TextField(
+      controller: controller,
       style: const TextStyle(fontSize: 24.0),
       decoration: InputDecoration(
         labelText: label,
@@ -34,9 +42,23 @@ class _TransferenciaFormState extends State<TransferenciaForm> {
   Widget _construirFormulario() {
     return Column(
       children: <Widget>[
-        _construirCampoEntrada('Número da Conta', '0000 - A', false),
-        _construirCampoEntrada('Valor', '0.00', true),
-        ElevatedButton(onPressed: () {}, child: const Text("Salvar")),
+        _construirCampoEntrada(
+            _controllerNumeroConta, 'Número da Conta', '0000 - A', false),
+        _construirCampoEntrada(_controllerValor, 'Valor', '0.00', true),
+        ElevatedButton(
+          onPressed: () {
+            try {
+              String numeroConta = _controllerNumeroConta.text;
+              double valor = double.parse(_controllerValor.text);
+              Transferencia tr =
+                  Transferencia(numeroConta: numeroConta, valor: valor);
+              imprime.log(tr.toString());
+            } catch (e) {
+              imprime.log('Não deu certo');
+            }
+          },
+          child: const Text("Salvar"),
+        ),
       ],
     );
   }
