@@ -1,13 +1,17 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:transferencias/database/database.dart';
 import 'dart:developer' as imprime;
 
 import 'package:transferencias/model/transferencia.dart';
 
 class TransferenciaForm extends StatefulWidget {
-  final void Function(Transferencia) addTransferencia;
+  static int quantConstruido = 0;
 
-  const TransferenciaForm({Key? key, required this.addTransferencia})
-      : super(key: key);
+  const TransferenciaForm({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _TransferenciaFormState createState() => _TransferenciaFormState();
@@ -31,7 +35,7 @@ class _TransferenciaFormState extends State<TransferenciaForm> {
       String hint, bool ehNumero) {
     return TextField(
       controller: controller,
-      style: const TextStyle(fontSize: 24.0),
+      style: const TextStyle(fontSize: 35.0, fontWeight: FontWeight.bold),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
@@ -42,25 +46,33 @@ class _TransferenciaFormState extends State<TransferenciaForm> {
     );
   }
 
-  void salvarTransferencia() {
+  int gerarId() {
+    var random = Random();
+    int id = random.nextInt(400);
+    return id;
+  }
+
+  Future<void> salvarTransferencia() async {
     try {
       String numeroConta = _controllerNumeroConta.text;
       double valor = double.parse(_controllerValor.text);
-      Transferencia tr = Transferencia(numeroConta: numeroConta, valor: valor);
+      Transferencia tr =
+          Transferencia(id: gerarId(), numeroConta: numeroConta, valor: valor);
+      salvar(tr);
+      var listaTransferencias = await getTodos();
+      Navigator.pop(context, listaTransferencias);
 
-      widget.addTransferencia(tr);
+      //widget.addTransferencia(tr);
     } catch (e) {
       imprime.log('Não deu certo');
     }
-
-    Navigator.of(context).pop();
   }
 
   Widget _construirFormulario() {
     return Column(
       children: <Widget>[
         _construirCampoEntrada(
-            _controllerNumeroConta, 'Número da Conta', '0000 - A', false),
+            _controllerNumeroConta, 'Número da Conta', '0000', true),
         _construirCampoEntrada(_controllerValor, 'Valor', '0.00', true),
         ElevatedButton(
           onPressed: salvarTransferencia,

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'telas/home.dart';
 
-void main() => runApp(const HomeApp());
+Future<void> main() async {
+  runApp(const HomeApp());
+}
 
 class HomeApp extends StatelessWidget {
   const HomeApp({Key? key}) : super(key: key);

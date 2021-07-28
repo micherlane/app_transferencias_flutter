@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:transferencias/database/database.dart';
 import '../model/transferencia.dart';
 import '../telas/formulario.dart';
 import 'dart:developer' as imprime;
@@ -11,14 +12,21 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final List<Transferencia> _transferencias = [];
+  List<Transferencia> _transferencias = [];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _construirAppBar('Banco'),
       floatingActionButton: _construirBotaoCriarTransferencia(),
-      body: _construirCardsTransferencias(),
+      body: FutureBuilder<List<Transferencia>>(
+        initialData: _transferencias,
+        future: getTodos(),
+        builder: (context, snapshot) {
+          _transferencias = snapshot.data!.toList();
+          return _construirCardsTransferencias();
+        },
+      ),
     );
   }
 
@@ -46,12 +54,15 @@ class _HomeState extends State<Home> {
   Widget _construirBotaoCriarTransferencia() {
     return FloatingActionButton(
       onPressed: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => TransferenciaForm(
-                      addTransferencia: adicionarTransferencia,
-                    )));
+        Future future = Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const TransferenciaForm()));
+        future.then((transferencias) {
+          if (transferencias != null) {
+            setState(() {
+              _transferencias = transferencias;
+            });
+          }
+        });
       },
       child: const Icon(Icons.add),
     );
@@ -61,8 +72,8 @@ class _HomeState extends State<Home> {
     return Card(
       child: ListTile(
         leading: const Icon(Icons.monetization_on),
-        title: Text(transferencia.numeroConta),
-        subtitle: Text(transferencia.valor.toString()),
+        title: Text('Número da Conta: ${transferencia.numeroConta}'),
+        subtitle: Text('Valor: ${transferencia.valor.toString()}'),
       ),
     );
   }

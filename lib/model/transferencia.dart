@@ -1,8 +1,10 @@
 class Transferencia {
+  int id;
   String numeroConta;
   double valor;
 
-  Transferencia({required this.numeroConta, required this.valor});
+  Transferencia(
+      {required this.id, required this.numeroConta, required this.valor});
 
   @override
   String toString() {
