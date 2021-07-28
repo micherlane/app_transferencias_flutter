@@ -43,6 +43,7 @@ class _HomeState extends State<Home> {
 
   Widget _construirCardsTransferencias() {
     return ListView.builder(
+      padding: const EdgeInsets.all(10.0),
       itemCount: _transferencias.length,
       itemBuilder: (ctx, index) {
         var tr = _transferencias[index];
@@ -68,12 +69,19 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Widget _construirTexto(String texto) {
+    return Text(
+      texto,
+      style: const TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
+    );
+  }
+
   Widget _construirItemTransferencia(Transferencia transferencia) {
     return Card(
       child: ListTile(
         leading: const Icon(Icons.monetization_on),
-        title: Text('Número da Conta: ${transferencia.numeroConta}'),
-        subtitle: Text('Valor: ${transferencia.valor.toString()}'),
+        title: _construirTexto('Número da Conta: ${transferencia.numeroConta}'),
+        subtitle: _construirTexto('Valor: ${transferencia.valor.toString()}'),
       ),
     );
   }

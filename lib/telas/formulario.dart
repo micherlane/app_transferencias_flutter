@@ -35,7 +35,7 @@ class _TransferenciaFormState extends State<TransferenciaForm> {
       String hint, bool ehNumero) {
     return TextField(
       controller: controller,
-      style: const TextStyle(fontSize: 35.0, fontWeight: FontWeight.bold),
+      style: const TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
